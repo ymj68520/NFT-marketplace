@@ -19,9 +19,9 @@ const Mint = () => {
   const [attributes, setAttributes] = useState(null);
   const [loader, setLoader] = useState(false);
 
-  const walletAddress = useSelector(state=>state.web3Reducer.account)
-  const nftReducer = useSelector(state=>state.nftReducer.contract)
-  const nftMarketplaceReducer = useSelector(state=>state.nftMarketplaceReducer.contract)
+  const walletAddress = useSelector(state => state.web3Reducer.account)
+  const nftReducer = useSelector(state => state.nftReducer.contract)
+  const nftMarketplaceReducer = useSelector(state => state.nftMarketplaceReducer.contract)
   const provider = useSelector(state => state.web3Reducer.connection);
 
   const addAttribute = (e) => {
@@ -49,10 +49,10 @@ const Mint = () => {
     setAttributes(filteredAttr);
   };
 
-  const uploadImageToIPFS = async()=> {
+  const uploadImageToIPFS = async () => {
 
     const { chainId } = await provider.getNetwork()
-    if(chainId !== process.env.CHAIN_ID){
+    if (chainId !== process.env.CHAIN_ID) {
       toast.error('Invalid chain Id ! Please use ropsten test network :)', {
         position: "top-right",
         autoClose: 5000,
@@ -61,8 +61,8 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-      return 
+      });
+      return
     }
 
     setLoader(true)
@@ -75,7 +75,7 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
     };
 
     try {
@@ -92,12 +92,12 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
       console.log('Error uploading file: ', error)
     }
   }
 
-  const uploadMetadataToIPFS = async(fileUrl) => {
+  const uploadMetadataToIPFS = async (fileUrl) => {
     if (!name || !description || !price || !fileUrl) return;
     /* first, upload to IPFS */
     const data = JSON.stringify({
@@ -111,7 +111,7 @@ const Mint = () => {
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       /* after file is uploaded to IPFS, return the URL to use it in the transaction */
       await mintNFT(url)
-      
+
       return url;
     } catch (error) {
       setLoader(false)
@@ -123,18 +123,18 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
       console.log("Error uploading file: ", error);
     }
   }
 
-  const mintNFT = async(metadata) =>{
+  const mintNFT = async (metadata) => {
     try {
-      
-      const tx = await nftMarketplaceReducer.sellItem(metadata,etherToWei(price),nftReducer.address,{from:walletAddress,value:etherToWei("0.0001")})
+
+      const tx = await nftMarketplaceReducer.sellItem(metadata, etherToWei(price), nftReducer.address, { from: walletAddress, value: etherToWei("0.0001") })
       const receipt = await tx.wait();
-      const formattedData =  await formatNFTData(receipt.events[4].args,nftReducer)
-      console.log("NFT metadata : ",formattedData)
+      const formattedData = await formatNFTData(receipt.events[4].args, nftReducer)
+      console.log("NFT metadata : ", formattedData)
       dispatch(nftMinted(formattedData))
 
       setFile("")
@@ -151,8 +151,8 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-        router.push("/creator-profile")
+      });
+      router.push("/creator-profile")
       setLoader(false)
     } catch (error) {
       setLoader(false)
@@ -164,7 +164,7 @@ const Mint = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
 
     }
   }
@@ -227,17 +227,17 @@ const Mint = () => {
             <label htmlFor="attributes" className="form-label">
               Attributes
             </label>
-          <div  className="d-flex flex-wrap">
-            {
-              attributes?
-              attributes.map((attr,i)=>{
-                return (
-                  <span key={i} className="m-1 badge attr-badge" onClick={()=>removeAttribute(attr.id)}>{attr.trait_type}:{attr.value}</span>
-                )
-              })
-              :""
-            }
-          </div>
+            <div className="d-flex flex-wrap">
+              {
+                attributes ?
+                  attributes.map((attr, i) => {
+                    return (
+                      <span key={i} className="m-1 badge attr-badge" onClick={() => removeAttribute(attr.id)}>{attr.trait_type}:{attr.value}</span>
+                    )
+                  })
+                  : ""
+              }
+            </div>
             <div className="d-flex attribute">
               <input
                 type="text"
@@ -259,8 +259,8 @@ const Mint = () => {
             </div>
           </div>
         </form>
-        <button type="submit" className="btn btn-success btn-block" onClick={()=>uploadImageToIPFS()} disabled={loader}>
-          {loader?"Minting...":"Mint NFT"}
+        <button type="submit" className="btn btn-success btn-block" onClick={() => uploadImageToIPFS()} disabled={loader}>
+          {loader ? "Minting..." : "Mint NFT"}
         </button>
       </div>
     </div>
