@@ -2,11 +2,15 @@ import React, { useRef, useState } from "react";
 import { basicAuth } from "../helpers/AuthHelper";
 import { toast } from 'react-toastify';
 import { create } from "ipfs-http-client";
+import { createHelia } from "helia";
+import { strings } from "@helia/strings";
 import { useDispatch, useSelector } from "react-redux";
 import { etherToWei, formatNFTData } from "../redux/interactions";
 import { useRouter } from "next/router";
 import { nftMinted } from "../redux/actions";
 const client = create("https://ipfs.infura.io:5001/api/v0");
+const clientHelia = createHelia();
+const s_Helia = strings(clientHelia);
 
 const Mint = () => {
   const router = useRouter()
@@ -18,11 +22,16 @@ const Mint = () => {
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState(null);
   const [loader, setLoader] = useState(false);
+  const [id, setId] = useState(null);
+  const [helia, setHelia] = useState(null);
+  const [isOnline, setIsOnline] = useState(false)
 
   const walletAddress = useSelector(state => state.web3Reducer.account)
   const nftReducer = useSelector(state => state.nftReducer.contract)
   const nftMarketplaceReducer = useSelector(state => state.nftMarketplaceReducer.contract)
   const provider = useSelector(state => state.web3Reducer.connection);
+  const nodeId = clientHelia.libp2p.peerId.tostring();
+  const nodeIsOnline = clientHelia.libp2p.status === 'started';
 
   const addAttribute = (e) => {
     e.preventDefault();
@@ -53,7 +62,7 @@ const Mint = () => {
 
     const { chainId } = await provider.getNetwork()
     if (chainId !== process.env.CHAIN_ID) {
-      toast.error('Invalid chain Id ! Please use ropsten test network :)', {
+      toast.error('Invalid chain Id ! Please use Sepolia test network :)', {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -78,9 +87,19 @@ const Mint = () => {
       });
     };
 
+    setHelia(clientHelia);
+    setId(nodeId);
+    setIsOnline(nodeIsOnline);
+    if (!helia || !id) {
+      return <h4>Starting Helia...</h4>
+    }
+
     try {
-      const added = await client.add(file)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      // const added = await client.add(file)
+      // const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      // await uploadMetadataToIPFS(url)
+      const added = await clientHelia.add(file)
+      const url = `https://ipfs.io/ipfs/${added.path}`
       await uploadMetadataToIPFS(url)
     } catch (error) {
       setLoader(false)
@@ -107,8 +126,10 @@ const Mint = () => {
       attributes: attributes
     });
     try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      // const added = await client.add(data);
+      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const added = await clientHelia.add(data);
+      const url = `https://ipfs.io/ipfs/${added.path}`;
       /* after file is uploaded to IPFS, return the URL to use it in the transaction */
       await mintNFT(url)
 

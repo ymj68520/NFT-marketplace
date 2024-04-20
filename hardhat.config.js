@@ -8,11 +8,11 @@ module.exports = {
       chainId: 31337
     },
   },
-  // defaultNetwork: "ropsten",
+  // defaultNetwork: "sepolia",
   // networks: {
   //   hardhat: {
   //   },
-  //   ropsten: {
+  //   sepolia: {
   //     url: ["ALCHEMY URL"],
   //     accounts: ['METAMASK/OTHER WALLET PRIVATE KEY'],
   //   }
