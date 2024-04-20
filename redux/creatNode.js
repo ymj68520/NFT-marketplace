@@ -5,7 +5,7 @@ import { createLibp2p } from "libp2p";
 import { tcp } from "@libp2p/tcp";
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
-import { identifyService } from "libp2p/identify";
+// import { identifyService } from "libp2p/identify";
 // import { unixfs } from "@helia/unixfs";
 
 export const createNode = async () => {
@@ -20,9 +20,9 @@ export const createNode = async () => {
         connectionEncryption: [noise()],
         streamMuxers: [yamux()],
         datastore,
-        services: {
-            identify: identifyService(),
-        },
+        // services: {
+        //     identify: identifyService(),
+        // },
     });
 
     const ipfsClient = await createHelia({
