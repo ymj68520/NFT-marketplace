@@ -22,16 +22,12 @@ const Mint = () => {
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [id, setId] = useState(null);
   const [helia, setHelia] = useState(null);
-  const [isOnline, setIsOnline] = useState(false)
 
   const walletAddress = useSelector(state => state.web3Reducer.account)
   const nftReducer = useSelector(state => state.nftReducer.contract)
   const nftMarketplaceReducer = useSelector(state => state.nftMarketplaceReducer.contract)
   const provider = useSelector(state => state.web3Reducer.connection);
-  const nodeId = clientHelia.libp2p.peerId.tostring();
-  const nodeIsOnline = clientHelia.libp2p.status === 'started';
 
   const addAttribute = (e) => {
     e.preventDefault();
@@ -88,9 +84,7 @@ const Mint = () => {
     };
 
     setHelia(clientHelia);
-    setId(nodeId);
-    setIsOnline(nodeIsOnline);
-    if (!helia || !id) {
+    if (!helia) {
       return <h4>Starting Helia...</h4>
     }
 
