@@ -2,15 +2,14 @@ import React, { useRef, useState } from "react";
 import { basicAuth } from "../helpers/AuthHelper";
 import { toast } from 'react-toastify';
 import { create } from "ipfs-http-client";
-import { createHelia } from "helia";
-import { strings } from "@helia/strings";
+import { createNode } from "../redux/creatNode.js";
+// import { unixfs } from "@helia/unixfs";
 import { useDispatch, useSelector } from "react-redux";
 import { etherToWei, formatNFTData } from "../redux/interactions";
 import { useRouter } from "next/router";
 import { nftMinted } from "../redux/actions";
 // const client = create("https://ipfs.infura.io:5001/api/v0");
-const clientHelia = createHelia();
-// const s_Helia = strings(clientHelia);
+const client = createNode();
 
 const Mint = () => {
   const router = useRouter()
@@ -22,7 +21,6 @@ const Mint = () => {
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [helia, setHelia] = useState(null);
 
   const walletAddress = useSelector(state => state.web3Reducer.account)
   const nftReducer = useSelector(state => state.nftReducer.contract)
@@ -83,8 +81,7 @@ const Mint = () => {
       });
     };
 
-    setHelia(clientHelia);
-    if (!helia) {
+    if (!client) {
       return <h4>Starting Helia...</h4>
     }
 
@@ -92,7 +89,7 @@ const Mint = () => {
       // const added = await client.add(file)
       // const url = `https://ipfs.infura.io/ipfs/${added.path}`
       // await uploadMetadataToIPFS(url)
-      const added = await clientHelia.add(file)
+      const added = await client.add(file)
       const url = `https://ipfs.io/ipfs/${added.path}`
       console(url);
       await uploadMetadataToIPFS(url)
