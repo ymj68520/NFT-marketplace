@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { etherToWei, formatNFTData } from "../redux/interactions";
 import { useRouter } from "next/router";
 import { nftMinted } from "../redux/actions";
-const client = create("https://ipfs.infura.io:5001/api/v0");
+// const client = create("https://ipfs.infura.io:5001/api/v0");
 const clientHelia = createHelia();
-const s_Helia = strings(clientHelia);
+// const s_Helia = strings(clientHelia);
 
 const Mint = () => {
   const router = useRouter()
@@ -94,6 +94,7 @@ const Mint = () => {
       // await uploadMetadataToIPFS(url)
       const added = await clientHelia.add(file)
       const url = `https://ipfs.io/ipfs/${added.path}`
+      console(url);
       await uploadMetadataToIPFS(url)
     } catch (error) {
       setLoader(false)
