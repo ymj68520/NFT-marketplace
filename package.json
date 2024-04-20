@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@helia/strings": "^3.0.3",
     "@openzeppelin/contracts": "^4.5.0",
     "axios": "^0.26.1",
     "helia": "^4.1.1",
